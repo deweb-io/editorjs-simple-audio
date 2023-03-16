@@ -1,12 +1,12 @@
 ![](https://badgen.net/badge/Editor.js/v2.0/blue)
 
-# Simple Image Tool
+# Simple Audio Tool
 
-Provides Image Blocks for the [Editor.js](https://editorjs.io).
+Provides Audio Blocks for the [Editor.js](https://editorjs.io).
 
-Works only with pasted image URLs and requires no server-side uploader.
+Works only with pasted audio URLs and requires no server-side uploader.
 
-![](assets/image-uploading.gif)
+![](assets/audio-uploading.gif)
 
 ## Installation
 
@@ -15,13 +15,13 @@ Works only with pasted image URLs and requires no server-side uploader.
 Get the package
 
 ```shell
-npm i --save-dev @editorjs/simple-image
+npm i --save-dev @editorjs/simple-audio
 ```
 
 Include module at your application
 
 ```javascript
-const SimpleImage = require('@editorjs/simple-image');
+const SimpleAudio = require('@editorjs/simple-audio');
 ```
 
 ### Download to your project's source dir
@@ -31,9 +31,9 @@ const SimpleImage = require('@editorjs/simple-image');
 
 ### Load from CDN
 
-You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/simple-image).
+You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/simple-audio).
 
-`https://cdn.jsdelivr.net/npm/@editorjs/simple-image@latest`
+`https://cdn.jsdelivr.net/npm/@editorjs/simple-audio@latest`
 
 Then require this script on page with Editor.js.
 
@@ -48,12 +48,12 @@ Add a new Tool to the `tools` property of the Editor.js initial config.
 ```javascript
 var editor = EditorJS({
   ...
-  
+
   tools: {
     ...
-    image: SimpleImage,
+    audio: SimpleAudio,
   }
-  
+
   ...
 });
 ```
@@ -76,16 +76,16 @@ This Tool has no config params
 
 | Field          | Type      | Description                     |
 | -------------- | --------- | ------------------------------- |
-| url            | `string`  | image's url                     |
-| caption        | `string`  | image's caption                 |
-| withBorder     | `boolean` | add border to image             |
+| url            | `string`  | audio's url                     |
+| caption        | `string`  | audio's caption                 |
+| withBorder     | `boolean` | add border to audio             |
 | withBackground | `boolean` | need to add background          |
-| stretched      | `boolean` | stretch image to screen's width |
+| stretched      | `boolean` | stretch audio to screen's width |
 
 
 ```json
 {
-    "type" : "image",
+    "type" : "audio",
     "data" : {
         "url" : "https://www.tesla.com/tesla_theme/assets/img/_vehicle_redesign/roadster_and_semi/roadster/hero.jpg",
         "caption" : "Roadster // tesla.com",

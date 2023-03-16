@@ -6,22 +6,23 @@ import './index.css';
 import { IconAddBorder, IconStretch, IconAddBackground } from '@codexteam/icons';
 
 /**
- * SimpleImage Tool for the Editor.js
- * Works only with pasted image URLs and requires no server-side uploader.
+ * SimpleAudio Tool for the Editor.js
+ * Works only with pasted audio URLs and requires no server-side uploader.
  *
- * @typedef {object} SimpleImageData
+ * @typedef {object} SimpleAudioData
  * @description Tool's input and output data format
- * @property {string} url — image URL
- * @property {string} caption — image caption
- * @property {boolean} withBorder - should image be rendered with border
- * @property {boolean} withBackground - should image be rendered with background
- * @property {boolean} stretched - should image be stretched to full width of container
+ * @property {string} url — audio URL
+ * @property {string} caption — audio caption
+ * @property {boolean} autoplay - audio autoplay enabled
+ * @property {boolean} muted - audio muted enabled
+ * @property {boolean} controls - audio controls enabled
+ * @property {object} image - thumbnail audio
  */
-export default class SimpleImage {
+export default class SimpleAudio {
   /**
    * Render plugin`s main Element and fill it with saved data
    *
-   * @param {{data: SimpleImageData, config: object, api: object}}
+   * @param {{data: SimpleAudioData, config: object, api: object}}
    *   data — previously saved data
    *   config - user config for Tool
    *   api - Editor.js API
@@ -55,9 +56,9 @@ export default class SimpleImage {
       /**
        * Tool's classes
        */
-      wrapper: 'cdx-simple-image',
-      imageHolder: 'cdx-simple-image__picture',
-      caption: 'cdx-simple-image__caption',
+      wrapper: 'cdx-simple-audio',
+      audioHolder: 'cdx-simple-audio__picture',
+      caption: 'cdx-simple-audio__caption',
     };
 
     /**
@@ -65,9 +66,10 @@ export default class SimpleImage {
      */
     this.nodes = {
       wrapper: null,
-      imageHolder: null,
-      image: null,
+      audioHolder: null,
+      audio: null,
       caption: null,
+      image: null
     };
 
     /**
@@ -76,77 +78,86 @@ export default class SimpleImage {
     this.data = {
       url: data.url || '',
       caption: data.caption || '',
-      withBorder: data.withBorder !== undefined ? data.withBorder : false,
-      withBackground: data.withBackground !== undefined ? data.withBackground : false,
-      stretched: data.stretched !== undefined ? data.stretched : false,
+      autoplay: data.autoplay !== undefined ? data.autoplay : false,
+      controls: data.controls !== undefined ? data.controls : false,
+      muted: data.muted !== undefined ? data.muted : false,
+      image: data.image !== undefined ? data.image : { url: '' }
     };
 
     /**
-     * Available Image tunes
+     * Available audio tunes
      */
     this.tunes = [
       {
-        name: 'withBorder',
-        label: 'Add Border',
-        icon: IconAddBorder,
+        name: 'autoplay',
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/><path d="M0 0h24v24H0z" fill="none"/></svg>`
       },
       {
-        name: 'stretched',
-        label: 'Stretch Image',
-        icon: IconStretch,
+        name: 'muted',
+        icon: `
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M7 9v6h4l5 5V4l-5 5H7z"/><path d="M0 0h24v24H0z" fill="none"/></svg>`
       },
       {
-        name: 'withBackground',
-        label: 'Add Background',
-        icon: IconAddBackground,
-      },
+        name: 'controls',
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.54 5.54L13.77 7.3 12 5.54 10.23 7.3 8.46 5.54 12 2zm2.92 10l-1.76-1.77L18.46 12l-1.76-1.77 1.76-1.77L22 12zm-10 2.92l1.77-1.76L12 18.46l1.77-1.76 1.77 1.76L12 22zm-2.92-10l1.76 1.77L5.54 12l1.76 1.77-1.76 1.77L2 12z"/><circle cx="12" cy="12" r="3"/><path fill="none" d="M0 0h24v24H0z"/></svg>`
+      }
     ];
   }
 
   /**
    * Creates a Block:
    *  1) Show preloader
-   *  2) Start to load an image
-   *  3) After loading, append image and caption input
+   *  2) Start to load an audio
+   *  3) After loading, append audio and caption input
    *
    * @public
    */
   render() {
     const wrapper = this._make('div', [this.CSS.baseClass, this.CSS.wrapper]),
-        loader = this._make('div', this.CSS.loading),
-        imageHolder = this._make('div', this.CSS.imageHolder),
-        image = this._make('img'),
-        caption = this._make('div', [this.CSS.input, this.CSS.caption], {
-          contentEditable: !this.readOnly,
-          innerHTML: this.data.caption || '',
-        });
+      loader = this._make('div', this.CSS.loading),
+      audioHolder = this._make('div', this.CSS.audioHolder),
+      image = this._make('img'),
+      audio = this._make('audio'),
+      caption = this._make('div', [this.CSS.input, this.CSS.caption], {
+        contentEditable: !this.readOnly,
+        innerHTML: this.data.caption || '',
+      });
 
     caption.dataset.placeholder = 'Enter a caption';
 
     wrapper.appendChild(loader);
 
     if (this.data.url) {
-      image.src = this.data.url;
+      audio.src = this.data.url;
+      audio.controls = this.data.controls;
+      audio.autoplay = this.data.autoplay;
+      audio.muted = this.data.muted;
+
     }
 
-    image.onload = () => {
+    if (this.data.iamge && this.data.iamge.url) {
+      image.src = this.data.iamge.url
+    }
+
+    audio.onloadstart = () => {
       wrapper.classList.remove(this.CSS.loading);
-      imageHolder.appendChild(image);
-      wrapper.appendChild(imageHolder);
+      audioHolder.appendChild(audio);
+      wrapper.appendChild(audioHolder);
       wrapper.appendChild(caption);
       loader.remove();
       this._acceptTuneView();
     };
 
-    image.onerror = (e) => {
+    audio.onerror = (e) => {
       // @todo use api.Notifies.show() to show error notification
-      console.log('Failed to load an image', e);
+      console.log('Failed to load audio', e);
     };
 
-    this.nodes.imageHolder = imageHolder;
+    this.nodes.audioHolder = audioHolder;
     this.nodes.wrapper = wrapper;
-    this.nodes.image = image;
+    this.nodes.audio = audio;
     this.nodes.caption = caption;
+    this.nodes.image = image;
 
     return wrapper;
   }
@@ -154,20 +165,28 @@ export default class SimpleImage {
   /**
    * @public
    * @param {Element} blockContent - Tool's wrapper
-   * @returns {SimpleImageData}
+   * @returns {SimpleAudioData}
    */
   save(blockContent) {
-    const image = blockContent.querySelector('img'),
-        caption = blockContent.querySelector('.' + this.CSS.input);
+    const audio = blockContent.querySelector('audio'),
+      caption = blockContent.querySelector('.' + this.CSS.input);
 
-    if (!image) {
+    if (!audio) {
       return this.data;
     }
 
-    return Object.assign(this.data, {
-      url: image.src,
+    let savedData = Object.assign(this.data, {
+      url: audio.src,
       caption: caption.innerHTML,
+      controls: video.controls,
+      autoplay: video.autoplay,
+      muted: video.muted,
+      image: {
+        url: video.poster
+      }
     });
+
+    return savedData
   }
 
   /**
@@ -176,12 +195,13 @@ export default class SimpleImage {
   static get sanitize() {
     return {
       url: {},
-      withBorder: {},
-      withBackground: {},
-      stretched: {},
+      controls: {},
+      autoplay: {},
+      muted: {},
       caption: {
         br: true,
       },
+      image: {}
     };
   }
 
@@ -195,24 +215,18 @@ export default class SimpleImage {
   }
 
   /**
-   * Read pasted image and convert it to base64
+   * Read pasted audio and convert it to object url
    *
    * @static
    * @param {File} file
-   * @returns {Promise<SimpleImageData>}
+   * @returns {Promise<SimpleAudioData>}
    */
   onDropHandler(file) {
-    const reader = new FileReader();
-
-    reader.readAsDataURL(file);
-
-    return new Promise(resolve => {
-      reader.onload = (event) => {
-        resolve({
-          url: event.target.result,
-          caption: file.name,
-        });
-      };
+    return new Promise((resolve, reject) => {
+      resolve({
+        url: URL.createObjectURL(file),
+        caption: file.name
+      });
     });
   }
 
@@ -224,10 +238,10 @@ export default class SimpleImage {
   onPaste(event) {
     switch (event.type) {
       case 'tag': {
-        const img = event.detail.data;
+        const audio = event.detail.data;
 
         this.data = {
-          url: img.src,
+          url: audio.src,
         };
         break;
       }
@@ -255,28 +269,35 @@ export default class SimpleImage {
   }
 
   /**
-   * Returns image data
+   * Returns audio data
    *
-   * @returns {SimpleImageData}
+   * @returns {SimpleAudioData}
    */
   get data() {
     return this._data;
   }
 
   /**
-   * Set image data and update the view
+   * Set audio data and update the view
    *
-   * @param {SimpleImageData} data
+   * @param {SimpleAudioData} data
    */
   set data(data) {
     this._data = Object.assign({}, this.data, data);
 
-    if (this.nodes.image) {
-      this.nodes.image.src = this.data.url;
+    if (this.nodes.audio) {
+      this.nodes.audio.src = this.data.url;
+      this.nodes.video.autoplay = this.data.autoplay;
+      this.nodes.video.controls = this.data.controls;
+      this.nodes.video.muted = this.data.muted;
     }
 
     if (this.nodes.caption) {
       this.nodes.caption.innerHTML = this.data.caption;
+    }
+
+    if (this.nodes.image) {
+      this.nodes.image.src = this.data.image.url;
     }
   }
 
@@ -289,21 +310,17 @@ export default class SimpleImage {
   static get pasteConfig() {
     return {
       patterns: {
-        image: /https?:\/\/\S+\.(gif|jpe?g|tiff|png|webp)$/i,
+        audio: /https?:\/\/\S+\.(mp3|aac|wav|ogg)$/i,
       },
-      tags: [
-        {
-          img: { src: true },
-        },
-      ],
+      tags: ['audio'],
       files: {
-        mimeTypes: [ 'image/*' ],
+        mimeTypes: ['audio/*'],
       },
     };
   }
 
   /**
-   * Returns image tunes config
+   * Returns audio tunes config
    *
    * @returns {Array}
    */
@@ -359,7 +376,7 @@ export default class SimpleImage {
    */
   _acceptTuneView() {
     this.tunes.forEach(tune => {
-      this.nodes.imageHolder.classList.toggle(this.CSS.imageHolder + '--' + tune.name.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`), !!this.data[tune.name]);
+      this.nodes.audioHolder.classList.toggle(this.CSS.audioHolder + '--' + tune.name.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`), !!this.data[tune.name]);
 
       if (tune.name === 'stretched') {
         this.api.blocks.stretchBlock(this.blockIndex, !!this.data.stretched);

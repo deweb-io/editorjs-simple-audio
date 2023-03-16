@@ -1,21 +1,22 @@
 {
-  "name": "@editorjs/simple-image",
+  "name": "@editorjs/simple-audio",
   "version": "1.5.1",
   "keywords": [
     "codex editor",
     "tool",
-    "image",
+    "audio",
     "server-less",
     "editor.js",
     "editorjs"
   ],
-  "description": "SimpleImage Tool for Editor.js",
+  "description": "SimpleAudio Tool for Editor.js",
   "license": "MIT",
-  "repository": "https://github.com/editor-js/simple-image",
+  "repository": "https://github.com/deweb-io/editorjs-simple-audio",
   "main": "./dist/bundle.js",
   "scripts": {
-    "build": "webpack --mode production",
-    "build:dev": "webpack --mode development --watch"
+    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode production",
+    "build:dev": "webpack --mode development --watch",
+    "build:copy": "npm run build && cp -f /Users/or/work/editorjs-simple-audio/dist/bundle.js /Users/or/work/CreatorApp/Frontend/node_modules/@dewebio/editorjs-simple-audio/dist/bundle.js"
   },
   "author": {
     "name": "CodeX",
