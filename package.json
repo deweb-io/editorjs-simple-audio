@@ -1,5 +1,5 @@
 {
-  "name": "@editorjs/editorjs-simple-audio",
+  "name": "@dewebio/editorjs-simple-audio",
   "version": "1.5.1",
   "keywords": [
     "codex editor",
@@ -11,17 +11,17 @@
   ],
   "description": "SimpleAudio Tool for Editor.js",
   "license": "MIT",
-  "repository": "https://github.com/deweb-io/editorjs-simple-audio",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deweb-io/editorjs-simple-audio.git"
+  },
   "main": "./dist/bundle.js",
   "scripts": {
     "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode production",
     "build:dev": "webpack --mode development --watch",
     "build:copy": "npm run build && cp -f /Users/or/work/editorjs-simple-audio/dist/bundle.js /Users/or/work/CreatorApp/Frontend/node_modules/@dewebio/editorjs-simple-audio/dist/bundle.js"
   },
-  "author": {
-    "name": "CodeX",
-    "email": "team@codex.so"
-  },
+  "author": "CodeX <team@codex.so>",
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
@@ -33,5 +33,9 @@
   },
   "dependencies": {
     "@codexteam/icons": "^0.0.6"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/deweb-io/editorjs-simple-audio/issues"
+  },
+  "homepage": "https://github.com/deweb-io/editorjs-simple-audio#readme"
 }
