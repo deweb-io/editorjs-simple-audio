@@ -79,7 +79,7 @@ export default class SimpleAudio {
       url: data.url || '',
       caption: data.caption || '',
       autoplay: data.autoplay !== undefined ? data.autoplay : false,
-      controls: data.controls !== undefined ? data.controls : false,
+      controls: data.controls !== undefined ? data.controls : true,
       muted: data.muted !== undefined ? data.muted : false,
       image: data.image !== undefined ? data.image : { url: '' }
     };
@@ -116,7 +116,7 @@ export default class SimpleAudio {
     const wrapper = this._make('div', [this.CSS.baseClass, this.CSS.wrapper]),
       loader = this._make('div', this.CSS.loading),
       audioHolder = this._make('div', this.CSS.audioHolder),
-      image = this._make('img'),
+      image = this._make('img', ),
       audio = this._make('audio'),
       caption = this._make('div', [this.CSS.input, this.CSS.caption], {
         contentEditable: !this.readOnly,
@@ -136,7 +136,8 @@ export default class SimpleAudio {
     }
 
     if (this.data.iamge && this.data.iamge.url) {
-      image.src = this.data.iamge.url
+      audio.dataset.image = this.data.iamge.url;
+      image.src = this.data.iamge.url;
     }
 
     audio.onloadstart = () => {
@@ -178,11 +179,11 @@ export default class SimpleAudio {
     let savedData = Object.assign(this.data, {
       url: audio.src,
       caption: caption.innerHTML,
-      controls: video.controls,
-      autoplay: video.autoplay,
-      muted: video.muted,
+      controls: audio.controls,
+      autoplay: audio.autoplay,
+      muted: audio.muted,
       image: {
-        url: video.poster
+        url: audio.dataset.image
       }
     });
 
@@ -287,9 +288,9 @@ export default class SimpleAudio {
 
     if (this.nodes.audio) {
       this.nodes.audio.src = this.data.url;
-      this.nodes.video.autoplay = this.data.autoplay;
-      this.nodes.video.controls = this.data.controls;
-      this.nodes.video.muted = this.data.muted;
+      this.nodes.audio.autoplay = this.data.autoplay;
+      this.nodes.audio.controls = this.data.controls;
+      this.nodes.audio.muted = this.data.muted;
     }
 
     if (this.nodes.caption) {
@@ -378,8 +379,16 @@ export default class SimpleAudio {
     this.tunes.forEach(tune => {
       this.nodes.audioHolder.classList.toggle(this.CSS.audioHolder + '--' + tune.name.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`), !!this.data[tune.name]);
 
-      if (tune.name === 'stretched') {
-        this.api.blocks.stretchBlock(this.blockIndex, !!this.data.stretched);
+      if (tune.name === 'controls') {
+        this.nodes.video.controls = this.data.controls;
+      }
+
+      if (tune.name === 'autoplay') {
+        this.nodes.video.autoplay = this.data.autoplay;
+      }
+
+      if (tune.name === 'muted') {
+        this.nodes.video.muted = this.data.muted;
       }
     });
   }
