@@ -97,10 +97,10 @@ export default class SimpleAudio {
         icon: `
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M7 9v6h4l5 5V4l-5 5H7z"/><path d="M0 0h24v24H0z" fill="none"/></svg>`
       },
-      {
-        name: 'controls',
-        icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.54 5.54L13.77 7.3 12 5.54 10.23 7.3 8.46 5.54 12 2zm2.92 10l-1.76-1.77L18.46 12l-1.76-1.77 1.76-1.77L22 12zm-10 2.92l1.77-1.76L12 18.46l1.77-1.76 1.77 1.76L12 22zm-2.92-10l1.76 1.77L5.54 12l1.76 1.77-1.76 1.77L2 12z"/><circle cx="12" cy="12" r="3"/><path fill="none" d="M0 0h24v24H0z"/></svg>`
-      }
+      // {
+      //   name: 'controls',
+      //   icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.54 5.54L13.77 7.3 12 5.54 10.23 7.3 8.46 5.54 12 2zm2.92 10l-1.76-1.77L18.46 12l-1.76-1.77 1.76-1.77L22 12zm-10 2.92l1.77-1.76L12 18.46l1.77-1.76 1.77 1.76L12 22zm-2.92-10l1.76 1.77L5.54 12l1.76 1.77-1.76 1.77L2 12z"/><circle cx="12" cy="12" r="3"/><path fill="none" d="M0 0h24v24H0z"/></svg>`
+      // }
     ];
   }
 
@@ -116,7 +116,7 @@ export default class SimpleAudio {
     const wrapper = this._make('div', [this.CSS.baseClass, this.CSS.wrapper]),
       loader = this._make('div', this.CSS.loading),
       audioHolder = this._make('div', this.CSS.audioHolder),
-      image = this._make('img', ),
+      image = this._make('img',),
       audio = this._make('audio'),
       caption = this._make('div', [this.CSS.input, this.CSS.caption], {
         contentEditable: !this.readOnly,
@@ -321,18 +321,29 @@ export default class SimpleAudio {
   }
 
   /**
-   * Returns audio tunes config
-   *
-   * @returns {Array}
-   */
+    * Makes buttons with tunes: add background, add border, stretch audio
+    * @return {HTMLDivElement}
+    */
   renderSettings() {
-    return this.tunes.map(tune => ({
-      ...tune,
-      label: this.api.i18n.t(tune.label),
-      toggle: true,
-      onActivate: () => this._toggleTune(tune.name),
-      isActive: !!this.data[tune.name],
-    }))
+    return null;
+    let wrapper = document.createElement('div');
+
+    this.tunes.forEach(tune => {
+      let el = document.createElement('div');
+
+      el.classList.add(this.CSS.settingsButton);
+      el.innerHTML = tune.icon;
+
+      el.addEventListener('click', () => {
+        this._toggleTune(tune.name);
+        el.classList.toggle(this.CSS.settingsButtonActive);
+      });
+
+      el.classList.toggle(this.CSS.settingsButtonActive, this.data[tune.name]);
+
+      wrapper.appendChild(el);
+    });
+    return wrapper;
   };
 
   /**
@@ -379,16 +390,16 @@ export default class SimpleAudio {
     this.tunes.forEach(tune => {
       this.nodes.audioHolder.classList.toggle(this.CSS.audioHolder + '--' + tune.name.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`), !!this.data[tune.name]);
 
-      if (tune.name === 'controls') {
-        this.nodes.video.controls = this.data.controls;
-      }
+      // if (tune.name === 'controls') {
+      //   this.nodes.audio.controls = this.data.controls;
+      // }
 
       if (tune.name === 'autoplay') {
-        this.nodes.video.autoplay = this.data.autoplay;
+        this.nodes.audio.autoplay = this.data.autoplay;
       }
 
       if (tune.name === 'muted') {
-        this.nodes.video.muted = this.data.muted;
+        this.nodes.audio.muted = this.data.muted;
       }
     });
   }
