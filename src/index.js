@@ -181,10 +181,7 @@ export default class SimpleAudio {
       caption: caption.innerHTML,
       controls: audio.controls,
       autoplay: audio.autoplay,
-      muted: audio.muted,
-      image: {
-        url: audio.dataset.image
-      }
+      muted: audio.muted
     });
 
     return savedData
@@ -202,7 +199,9 @@ export default class SimpleAudio {
       caption: {
         br: true,
       },
-      image: {}
+      image: {
+        url: true
+      }
     };
   }
 
